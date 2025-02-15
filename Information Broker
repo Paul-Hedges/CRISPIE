@@ -1,0 +1,41 @@
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+# Function to search the API using the provided key pair
+def search_api(public_key, private_key):
+    # Placeholder for API search logic
+    # For example, use requests to authenticate and search the API
+    # Example: response = requests.get(api_url, headers={"Authorization": f"Bearer {public_key}:{private_key}"})
+    # Here we return a placeholder response
+    return [
+        {"transaction_id": 1, "amount": 100, "description": "Purchase A"},
+        {"transaction_id": 2, "amount": 200, "description": "Purchase B"},
+    ]
+
+# Function to summarize transactions
+def summarize_transactions(transactions):
+    total_amount = sum(tx['amount'] for tx in transactions)
+    summary = {
+        "total_transactions": len(transactions),
+        "total_amount": total_amount,
+        "transactions": transactions
+    }
+    return summary
+
+@app.route('/summarize', methods=['POST'])
+def summarize():
+    data = request.json
+    public_key = data.get('public_key')
+    private_key = data.get('private_key')
+
+    if not public_key or not private_key:
+        return jsonify({"error": "Public and private keys are required"}), 400
+
+    transactions = search_api(public_key, private_key)
+    summary = summarize_transactions(transactions)
+
+    return jsonify(summary)
+
+if __name__ == '__main__':
+    app.run(debug=True)
